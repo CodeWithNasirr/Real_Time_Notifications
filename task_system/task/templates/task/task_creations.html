@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Task</title>
+    <link rel="stylesheet" href="{% static 'task/css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Create a New Task</h1>
+
+        <!-- Form to create a new task -->
+        <form id="taskForm" method="post" action="{% url 'task-create' %}">
+            {% csrf_token %}
+            <input type="text" id="taskTitle" name="title" placeholder="Task Title" required>
+            <textarea id="taskDescription" name="description" placeholder="Task Description" required></textarea>
+            <input type="datetime-local" id="taskDeadline" name="deadline" required>
+            <button type="submit">Add Task</button>
+        </form>
+
+        <div>
+            <a href="{% url 'task-deadline' %}">Go to Deadline Page</a>  <!-- Link to view tasks by deadline -->
+        </div>
+    </div>
+</body>
+</html>

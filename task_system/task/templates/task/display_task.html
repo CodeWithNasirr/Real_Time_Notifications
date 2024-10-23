@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Task Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .task-list li {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #4caf50;
+            width: 0%;
+        }
+
+        .notification {
+            background-color: #ff9800;
+            color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .notification.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-time Task Notifications</h1>
+
+        <!-- Notifications area -->
+        <div id="notification" class="notification hidden"></div>
+
+        <!-- Task List -->
+        <ul id="taskList" class="task-list"></ul>
+
+        <!-- Progress Bar for Task Deadline -->
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        // WebSocket connection for real-time updates
+        const socket = new WebSocket('ws://localhost:8000/ws/main');
+
+        socket.onopen = function(event) {
+            console.log("Connected to WebSocket.");
+        };
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            console.log(data)
+            console.log()
+            if (data.Message === "New task created!") {
+                showNotification(`New task: ${data.data.title} - Deadline: ${data.data.deadline.replace('T', ' Time ')}`);
+                addTaskToList(data.data.title, data.data.deadline.replace('T', ' Time '));
+            } else if (data.Message === "Task deadline is near!") {
+                console.log("Else Work")
+                showNotification(`Task deadline approaching: ${data.data.title} - Deadline: ${data.data.deadline}`);
+                updateProgressBar(data.data.title, data.data.deadline);
+            }
+        };
+
+        socket.onclose = function(event) {
+            console.log("WebSocket connection closed.");
+        };
+
+        function showNotification(message) {
+            const notificationElement = document.getElementById('notification');
+            notificationElement.textContent = message;
+            notificationElement.classList.remove('hidden');
+
+            setTimeout(() => {
+                notificationElement.classList.add('hidden');
+            }, 10000);
+        }
+
+        function addTaskToList(title, deadline) {
+            const taskList = document.getElementById('taskList');
+            const taskItem = document.createElement('li');
+            taskItem.textContent = `Task: ${title} - Deadline: ${deadline}`;
+            taskList.appendChild(taskItem);
+        }
+
+        function updateProgressBar(title, deadline) {
+            const progressElement = document.getElementById('progress');
+            const progressPercent = Math.random() * 100;  // Just simulating progress for now
+            progressElement.style.width = `${progressPercent}%`;
+        }
+    </script>
+</body>
+</html>

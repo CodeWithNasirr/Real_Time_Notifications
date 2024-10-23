@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="{% static 'task/css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Task Manager</h1>
+
+        <!-- Form to create a new task -->
+        <form id="taskForm" method="post">
+            {% csrf_token %}
+            <input type="text" id="taskTitle" name="title" placeholder="Task Title" required>
+            <textarea id="taskDescription" name="description" placeholder="Task Description" required></textarea>
+            <input type="datetime-local" id="taskDeadline" name="deadline" required>
+            <button type="submit">Addd Task</button>
+        </form>
+
+        <!-- Task list display -->
+        <div id="taskList">
+            <h2>Tasks</h2>
+            <ul id="taskItems">
+                <!-- {% for task in tasks %} -->
+                    <li data-task-id="{{ task.id }}">
+                        <!-- <strong>{{ task.title }}</strong> - {{ task.status }} (Deadline: {{ task.deadline }}) -->
+                        <strong>Title Here</strong> - Status (Deadline: deadline)
+                    </li>
+                <!-- {% endfor %} -->
+            </ul>
+        </div>
+
+        <!-- Real-time notifications -->
+        <div id="notifications">
+            <h2>Real-time Updates</h2>
+            <div id="updates"></div>
+        </div>
+    </div>
+</body>
+</html>
